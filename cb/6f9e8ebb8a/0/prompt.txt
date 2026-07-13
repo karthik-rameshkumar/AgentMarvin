@@ -1,0 +1,21 @@
+the remote is https://github.com/karthik-rameshkumar/AgentMarvin
+
+---
+
+open the PR
+
+---
+
+Now change the git remote to this entire://aws-us-east-2.entire.io/gh/karthik-rameshkumar/agentmarvin
+
+---
+
+yes verify
+
+---
+
+update to match and also clear up all branches :)
+
+---
+
+Let's plan M1 :)

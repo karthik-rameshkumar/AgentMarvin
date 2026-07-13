@@ -1,0 +1,55 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "cb6f9e8ebb8a",
+  "strategy": "manual-commit",
+  "branch": "m1-lost-sessions",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "README.md",
+    "index.html",
+    "scripts/gen-episode1.ts",
+    "scripts/render-frame.ts",
+    "src/audio/audio.ts",
+    "src/campaign/episode1.ts",
+    "src/core/game.ts",
+    "src/core/input.ts",
+    "src/main.ts",
+    "src/mechanics/evidence.ts",
+    "src/mechanics/gates.ts",
+    "src/mechanics/recorder.ts",
+    "src/mechanics/sessions.ts",
+    "src/mechanics/trust.ts",
+    "src/render/distortion.ts",
+    "src/render/gateui.ts",
+    "src/render/hud.ts",
+    "src/render/sprites.ts",
+    "src/render/textures.ts",
+    "src/weapons/contextScanner.ts",
+    "src/weapons/sessionReplayer.ts",
+    "src/weapons/weapons.ts",
+    "src/world/entities.ts",
+    "src/world/map.ts",
+    "src/world/types.ts",
+    "test/evidence.test.ts",
+    "test/gates.test.ts",
+    "test/integration.episode1.test.ts",
+    "test/sessions.test.ts",
+    "test/trust.test.ts"
+  ],
+  "sessions": [
+    {
+      "metadata": "/cb/6f9e8ebb8a/0/metadata.json",
+      "transcript": "/cb/6f9e8ebb8a/0/full.jsonl",
+      "compact_transcript": "/cb/6f9e8ebb8a/0/transcript.jsonl",
+      "content_hash": "/cb/6f9e8ebb8a/0/content_hash.txt",
+      "prompt": "/cb/6f9e8ebb8a/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 5133,
+    "cache_creation_tokens": 126345,
+    "cache_read_tokens": 18933623,
+    "output_tokens": 100949,
+    "api_call_count": 81
+  }
+}

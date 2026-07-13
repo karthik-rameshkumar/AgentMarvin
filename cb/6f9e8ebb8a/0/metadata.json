@@ -1,0 +1,78 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "cb6f9e8ebb8a",
+  "session_id": "c867ec17-d5ad-40e1-bc21-f13dd4aa9f3a",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-13T04:30:55.43641Z",
+  "branch": "m1-lost-sessions",
+  "checkpoints_count": 6,
+  "files_touched": [
+    "src/world/types.ts",
+    "src/mechanics/trust.ts",
+    "src/mechanics/evidence.ts",
+    "src/mechanics/sessions.ts",
+    "src/mechanics/recorder.ts",
+    "src/mechanics/gates.ts",
+    "src/world/entities.ts",
+    "src/render/sprites.ts",
+    "src/weapons/weapons.ts",
+    "src/weapons/contextScanner.ts",
+    "src/weapons/sessionReplayer.ts",
+    "src/audio/audio.ts",
+    "src/render/textures.ts",
+    "src/world/map.ts",
+    "src/render/distortion.ts",
+    "src/render/hud.ts",
+    "src/render/gateui.ts",
+    "index.html",
+    "src/core/input.ts",
+    "src/core/game.ts",
+    "src/main.ts",
+    "src/campaign/episode1.ts",
+    "scripts/gen-episode1.ts",
+    "test/trust.test.ts",
+    "test/evidence.test.ts",
+    "test/gates.test.ts",
+    "test/sessions.test.ts",
+    "scripts/render-frame.ts",
+    "test/integration.episode1.test.ts",
+    "README.md"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-opus-4-8[1m]",
+  "turn_id": "a070a3414eac",
+  "checkpoint_transcript_start": 537,
+  "transcript_lines_at_start": 537,
+  "compact_transcript_start": 136,
+  "token_usage": {
+    "input_tokens": 5133,
+    "cache_creation_tokens": 126345,
+    "cache_read_tokens": 18933623,
+    "output_tokens": 100949,
+    "api_call_count": 81
+  },
+  "session_metrics": {
+    "turn_count": 10
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-13T04:30:55.318064Z",
+    "agent_lines": 1933,
+    "agent_removed": 181,
+    "human_added": 730,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 2663,
+    "total_lines_changed": 2844,
+    "agent_percentage": 74.33192686357243,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0
+    }
+  ]
+}
