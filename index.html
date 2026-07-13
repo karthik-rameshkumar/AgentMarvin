@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgentMarvin — M0 Engine Skeleton</title>
+    <style>
+      :root { color-scheme: dark; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        background: #05060a;
+        color: #7CFFB2;
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        overflow: hidden;
+      }
+      #stage {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      /* Crisp integer-scaled pixels — the 320x200 look (docs/08). */
+      #screen {
+        image-rendering: pixelated;
+        image-rendering: crisp-edges;
+        background: #000;
+        box-shadow: 0 0 0 1px #123, 0 0 40px #0f8;
+        cursor: none;
+      }
+      #overlay {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        pointer-events: none;
+        text-shadow: 0 0 6px #0f8;
+        letter-spacing: 0.05em;
+      }
+      #overlay.hidden { display: none; }
+      #overlay h1 { font-size: 18px; margin: 0 0 6px; color: #7CFFB2; }
+      #overlay p { font-size: 12px; margin: 2px 0; color: #4fd39a; }
+      kbd {
+        background: #0d1f18;
+        border: 1px solid #1c5c42;
+        border-radius: 3px;
+        padding: 0 4px;
+        color: #7CFFB2;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <canvas id="screen" width="320" height="200"></canvas>
+      <div id="overlay">
+        <h1>AGENTMARVIN // M0</h1>
+        <p>WORKING DIRECTORY — engine skeleton</p>
+        <p style="margin-top:10px">click to enter the Repository</p>
+        <p style="margin-top:10px; color:#2f8f68">
+          <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move &nbsp;·&nbsp;
+          <kbd>mouse</kbd> look &nbsp;·&nbsp; <kbd>E</kbd> door &nbsp;·&nbsp; <kbd>Esc</kbd> release
+        </p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
