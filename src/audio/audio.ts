@@ -85,4 +85,29 @@ export class Audio {
   pickup(): void {
     this.blip('triangle', 520, 0.12, 0.18, 880);
   }
+
+  /** Context Scanner primary sweep. */
+  scan(): void {
+    this.blip('sawtooth', 300, 0.14, 0.1, 520);
+  }
+
+  /** Context Scanner alt-fire precise ping. */
+  ping(): void {
+    this.blip('sine', 880, 0.1, 0.14, 1320);
+  }
+
+  /** Session Replayer — ethereal shimmer as a ghost spawns. */
+  ghost(): void {
+    this.blip('triangle', 220, 0.5, 0.12, 440);
+  }
+
+  /** Evidence token gained. */
+  evidence(): void {
+    this.blip('triangle', 660, 0.16, 0.16, 990);
+  }
+
+  /** Gate decision committed (thunky, ceremonial). */
+  gate(): void {
+    this.blip('square', 120, 0.4, 0.2, 80);
+  }
 }

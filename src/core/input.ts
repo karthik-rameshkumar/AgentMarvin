@@ -2,7 +2,17 @@
 // Movement is Pointer-Lock mouse-look + WASD/arrows. Bindings are a map so they
 // can be remapped later (docs/08 accessibility: remappable controls).
 
-export type Action = 'forward' | 'back' | 'left' | 'right' | 'interact';
+export type Action =
+  | 'forward'
+  | 'back'
+  | 'left'
+  | 'right'
+  | 'interact'
+  | 'fire'
+  | 'altfire'
+  | 'weapon1'
+  | 'weapon2'
+  | 'record';
 
 const DEFAULT_BINDINGS: Record<string, Action> = {
   KeyW: 'forward',
@@ -14,6 +24,15 @@ const DEFAULT_BINDINGS: Record<string, Action> = {
   KeyD: 'right',
   ArrowRight: 'right',
   KeyE: 'interact',
+  Digit1: 'weapon1',
+  Digit2: 'weapon2',
+  Backquote: 'record',
+};
+
+/** Mouse buttons → actions (0 = left, 2 = right). */
+const MOUSE_BINDINGS: Record<number, Action> = {
+  0: 'fire',
+  2: 'altfire',
 };
 
 export class Input {
@@ -44,6 +63,9 @@ export class Input {
     this.canvas.addEventListener('click', this.requestLock);
     document.addEventListener('pointerlockchange', this.onLockChange);
     document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mousedown', this.onMouseDown);
+    document.addEventListener('mouseup', this.onMouseUp);
+    this.canvas.addEventListener('contextmenu', this.onContextMenu);
   }
 
   detach(): void {
@@ -52,6 +74,9 @@ export class Input {
     this.canvas.removeEventListener('click', this.requestLock);
     document.removeEventListener('pointerlockchange', this.onLockChange);
     document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('mousedown', this.onMouseDown);
+    document.removeEventListener('mouseup', this.onMouseUp);
+    this.canvas.removeEventListener('contextmenu', this.onContextMenu);
   }
 
   isDown(action: Action): boolean {
@@ -97,6 +122,23 @@ export class Input {
   private onMouseMove = (e: MouseEvent): void => {
     if (!this.locked) return;
     this.mouseDx += e.movementX * this.sensitivity;
+  };
+
+  private onMouseDown = (e: MouseEvent): void => {
+    if (!this.locked) return; // ignore clicks used to acquire lock / UI
+    const action = MOUSE_BINDINGS[e.button];
+    if (!action) return;
+    if (!this.held.has(action)) this.pressedThisFrame.add(action);
+    this.held.add(action);
+  };
+
+  private onMouseUp = (e: MouseEvent): void => {
+    const action = MOUSE_BINDINGS[e.button];
+    if (action) this.held.delete(action);
+  };
+
+  private onContextMenu = (e: Event): void => {
+    e.preventDefault(); // right-click is alt-fire, not a menu
   };
 
   private onKeyDown = (e: KeyboardEvent): void => {

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AgentMarvin — M0 Engine Skeleton</title>
+    <title>AgentMarvin — Episode 1: Lost Sessions</title>
     <style>
       :root { color-scheme: dark; }
       html, body {
@@ -48,18 +48,111 @@
         padding: 0 4px;
         color: #7CFFB2;
       }
+
+      /* ---- Neon terminal HUD (docs/08) ---- */
+      .hud {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        font-family: inherit;
+        text-shadow: 0 0 5px currentColor;
+        letter-spacing: 0.06em;
+      }
+      .hud.glitch { animation: hud-glitch 0.28s steps(2) infinite; }
+      @keyframes hud-glitch {
+        0% { transform: translate(0, 0); filter: none; }
+        50% { transform: translate(1px, -1px); filter: hue-rotate(20deg); }
+        100% { transform: translate(-1px, 0); filter: none; }
+      }
+      .hud-trust {
+        position: absolute; top: 14px; left: 16px; width: 220px;
+        color: #7CFFB2; font-size: 13px;
+      }
+      .hud-trust-label { margin-bottom: 4px; }
+      .hud-trust-bar {
+        height: 10px; border: 1px solid #1c5c42; background: #06110c;
+        box-shadow: 0 0 8px #0f83;
+      }
+      .hud-trust-fill {
+        height: 100%; width: 100%; background: #7CFFB2;
+        transition: width 0.3s ease;
+      }
+      /* Tier tints the meter (docs/05). */
+      .hud[data-tier="T1"] .hud-trust-fill { background: #ffcf5a; }
+      .hud[data-tier="T1"] .hud-trust { color: #ffcf5a; }
+      .hud[data-tier="below"] .hud-trust-fill { background: #ff5a72; }
+      .hud-bottom {
+        position: absolute; bottom: 14px; left: 16px; right: 16px;
+        display: flex; justify-content: space-between; font-size: 13px; color: #7CFFB2;
+      }
+      .hud-crosshair {
+        position: absolute; left: 50%; top: 50%; width: 7px; height: 7px;
+        transform: translate(-50%, -50%);
+        border: 1px solid #7CFFB2; border-radius: 50%; opacity: 0.7;
+        box-shadow: 0 0 6px #0f8;
+      }
+      .hud-toasts {
+        position: absolute; left: 50%; bottom: 22%; transform: translateX(-50%);
+        width: min(80%, 520px); text-align: center; display: flex;
+        flex-direction: column; gap: 6px; align-items: center;
+      }
+      .hud-toast {
+        background: #06110cd0; border: 1px solid #1c5c42; color: #b8ffd8;
+        padding: 6px 12px; font-size: 13px; border-radius: 3px;
+        opacity: 0; transform: translateY(8px); transition: all 0.3s ease;
+        box-shadow: 0 0 14px #0f84;
+      }
+      .hud-toast.show { opacity: 1; transform: translateY(0); }
+      .hud-reveal {
+        position: absolute; inset: 0; background: #02060488;
+        backdrop-filter: blur(2px);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 8px; text-align: center; pointer-events: none;
+      }
+      .hud-reveal.hidden { display: none; }
+      .hud-reveal-title { font-size: 22px; color: #7CFFB2; margin-bottom: 10px; }
+      .hud-reveal-line { font-size: 14px; color: #9fe6c4; }
+
+      /* ---- Gate console (docs/02 §5) ---- */
+      .gate {
+        position: absolute; inset: 0; display: grid; place-items: center;
+        background: #02060499; z-index: 10;
+      }
+      .gate.hidden { display: none; }
+      .gate-panel {
+        background: #06110cf0; border: 1px solid #1c5c42; padding: 24px 28px;
+        width: min(90%, 460px); text-align: center; box-shadow: 0 0 40px #0f85;
+      }
+      .gate-title { font-size: 20px; color: #ffcf5a; letter-spacing: 0.1em; }
+      .gate-sub { font-size: 12px; color: #6fbf98; margin: 8px 0 16px; }
+      .gate-evidence { font-size: 13px; color: #7CFFB2; margin-bottom: 16px; }
+      .gate-buttons { display: flex; gap: 10px; justify-content: center; }
+      .gate-buttons button {
+        flex: 1; padding: 10px; font-family: inherit; font-size: 13px;
+        letter-spacing: 0.08em; cursor: pointer; color: #05060a;
+        background: #7CFFB2; border: none; border-radius: 3px;
+      }
+      .gate-buttons button:hover { background: #a8ffcf; }
+      .gate-buttons button[data-decision="promote"] { background: #ffcf5a; }
+      .gate-buttons button[data-decision="reject"] { background: #ff8fa3; }
+      .gate-hint { font-size: 11px; color: #4f7a66; margin-top: 14px; }
     </style>
   </head>
   <body>
     <div id="stage">
       <canvas id="screen" width="320" height="200"></canvas>
       <div id="overlay">
-        <h1>AGENTMARVIN // M0</h1>
-        <p>WORKING DIRECTORY — engine skeleton</p>
+        <h1>AGENTMARVIN</h1>
+        <p>EPISODE 1 — LOST SESSIONS</p>
         <p style="margin-top:10px">click to enter the Repository</p>
         <p style="margin-top:10px; color:#2f8f68">
           <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move &nbsp;·&nbsp;
-          <kbd>mouse</kbd> look &nbsp;·&nbsp; <kbd>E</kbd> door &nbsp;·&nbsp; <kbd>Esc</kbd> release
+          <kbd>mouse</kbd> look &nbsp;·&nbsp; <kbd>LMB</kbd> use weapon &nbsp;·&nbsp;
+          <kbd>RMB</kbd> alt
+        </p>
+        <p style="color:#2f8f68">
+          <kbd>1</kbd><kbd>2</kbd> weapons &nbsp;·&nbsp; <kbd>E</kbd> interact &nbsp;·&nbsp;
+          <kbd>Esc</kbd> release
         </p>
       </div>
     </div>

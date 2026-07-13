@@ -9,30 +9,37 @@ import { deflateSync } from 'node:zlib';
 import { SCREEN_W, SCREEN_H } from '../src/render/framebuffer';
 import { buildTextures } from '../src/render/textures';
 import { renderWalls } from '../src/render/raycaster';
-import { renderSprites } from '../src/render/sprites';
+import { renderSprites, type SpriteInstance } from '../src/render/sprites';
 import { drawDebug } from '../src/render/hud';
 import { parseMap, World } from '../src/world/map';
-import { createEntities, spriteInstances } from '../src/world/entities';
+import { createEntities, entitySprites } from '../src/world/entities';
 import type { Player } from '../src/world/types';
 
 const outFile = process.argv[2] ?? 'frame.png';
 const FOV = 0.66;
 
-const map = parseMap(JSON.parse(readFileSync('public/maps/working-directory.json', 'utf8')));
+const map = parseMap(JSON.parse(readFileSync('public/maps/episode1-lost-sessions.json', 'utf8')));
 const world = new World(map);
 const tex = buildTextures(map.palette);
-const sprites = spriteInstances(createEntities(map), tex);
+const entities = createEntities(map);
 
-const angle = map.spawn?.angle ?? 0;
-const at = map.spawn?.at ?? [1.5, 1.5];
+// Stand in the A->B corridor looking east into the bot room, and pre-expose the
+// bots so the frame exercises the real/fake tint + fade paths.
+for (const e of entities) {
+  if (e.type === 'hallucination-bot') e.exposed = true;
+}
+const sprites: SpriteInstance[] = entitySprites(entities, tex, 0.2);
+// A translucent ghost mid-replay, to exercise the alpha path.
+sprites.push({ pos: { x: 14, y: 6.5 }, texture: tex.sprites.get('ghost')!, alpha: 0.55 });
+
 const player: Player = {
-  pos: { x: at[0] + 0.5, y: at[1] + 0.5 },
-  dir: { x: Math.cos(angle), y: Math.sin(angle) },
-  plane: { x: -Math.sin(angle) * FOV, y: Math.cos(angle) * FOV },
+  pos: { x: 9.5, y: 6.5 },
+  dir: { x: 1, y: 0 },
+  plane: { x: 0, y: FOV },
 };
 
-// Open the door so the far room + hallucination bot are visible through it.
-world.tryOpenDoor({ x: 9.5, y: 7.5 }, { x: 1, y: 0 });
+// Open the corridor doors so the bot room is visible.
+world.openDoorAt(8, 6);
 
 const buf = new Uint32Array(SCREEN_W * SCREEN_H);
 const fb = {

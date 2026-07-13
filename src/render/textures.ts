@@ -115,14 +115,13 @@ function makeGlow(color: number, r: number): Texture {
   return t;
 }
 
-/** A little humanoid blob sprite (Hallucination Bot placeholder). */
-function makeBot(color: number): Texture {
+/** A little humanoid blob sprite. `eye` null = no eyes (used for ghosts). */
+function makeHumanoid(color: number, eye: number | null): Texture {
   const size = 48;
   const t = empty(size, size);
   const put = (x: number, y: number, c: number): void => {
     if (x >= 0 && x < size && y >= 0 && y < size) t.data[y * size + x] = c;
   };
-  const eye = rgba(255, 60, 90);
   // Body ellipse.
   for (let y = 10; y < 44; y++) {
     for (let x = 12; x < 36; x++) {
@@ -139,11 +138,58 @@ function makeBot(color: number): Texture {
       if (nx * nx + ny * ny <= 1) put(x, y, jitter(color, 8));
     }
   }
-  // Glowing eyes.
-  put(21, 9, eye);
-  put(22, 9, eye);
-  put(26, 9, eye);
-  put(27, 9, eye);
+  if (eye !== null) {
+    put(21, 9, eye);
+    put(22, 9, eye);
+    put(26, 9, eye);
+    put(27, 9, eye);
+  }
+  return t;
+}
+
+/** A small rubber duck (docs/10). */
+function makeDuck(): Texture {
+  const size = 40;
+  const t = empty(size, size);
+  const yellow = rgba(255, 210, 40);
+  const beak = rgba(240, 130, 30);
+  const put = (x: number, y: number, c: number): void => {
+    if (x >= 0 && x < size && y >= 0 && y < size) t.data[y * size + x] = c;
+  };
+  // Body.
+  for (let y = 18; y < 34; y++)
+    for (let x = 10; x < 30; x++) {
+      const nx = (x - 20) / 10;
+      const ny = (y - 26) / 8;
+      if (nx * nx + ny * ny <= 1) put(x, y, jitter(yellow, ((x + y) % 4) - 1));
+    }
+  // Head.
+  for (let y = 8; y < 22; y++)
+    for (let x = 22; x < 34; x++) {
+      const nx = (x - 28) / 6;
+      const ny = (y - 15) / 7;
+      if (nx * nx + ny * ny <= 1) put(x, y, jitter(yellow, 6));
+    }
+  put(33, 15, beak);
+  put(34, 15, beak);
+  put(33, 16, beak);
+  put(29, 12, rgba(20, 20, 20)); // eye
+  return t;
+}
+
+/** A glowing README document (docs/10). */
+function makeReadme(accent: number): Texture {
+  const size = 40;
+  const t = empty(size, size);
+  const paper = rgba(230, 240, 235);
+  for (let y = 6; y < 34; y++)
+    for (let x = 10; x < 30; x++) {
+      const edge = x < 12 || x >= 28 || y < 8 || y >= 32;
+      t.data[y * size + x] = edge ? accent : paper;
+    }
+  // Text lines.
+  for (let ly = 12; ly < 30; ly += 4)
+    for (let x = 14; x < 26; x++) t.data[ly * size + x] = rgba(40, 60, 50);
   return t;
 }
 
@@ -170,8 +216,12 @@ export function buildTextures(paletteName: string): TextureSet {
   const sprites = new Map<string, Texture>();
   sprites.set('session-anchor', makeGlow(rgba(90, 160, 255), 22));
   sprites.set('pickup', makeGlow(p.accent, 16));
-  sprites.set('hallucination-bot', makeBot(rgba(150, 90, 200)));
+  sprites.set('hallucination-bot', makeHumanoid(rgba(150, 90, 200), rgba(255, 60, 90)));
   sprites.set('gate-node', makeGlow(rgba(255, 180, 80), 22));
+  sprites.set('ghost', makeHumanoid(rgba(180, 220, 255), null));
+  sprites.set('rubber-duck', makeDuck());
+  sprites.set('readme', makeReadme(p.accent));
+  sprites.set('evidence-token', makeGlow(rgba(120, 255, 178), 12));
   // Fallback marker for any unknown entity type.
   sprites.set('__default', makeGlow(rgba(200, 200, 200), 18));
 

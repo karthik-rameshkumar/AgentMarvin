@@ -3,13 +3,25 @@
 // depth buffer so they're correctly occluded by geometry. Transparent texels
 // (alpha 0) are skipped.
 
-import { Framebuffer, SCREEN_W, SCREEN_H, shade } from './framebuffer';
+import { Framebuffer, SCREEN_W, SCREEN_H, shade, rgba } from './framebuffer';
 import type { Texture } from './textures';
 import type { Player, Vec2 } from '../world/types';
 
 export interface SpriteInstance {
   pos: Vec2;
   texture: Texture;
+  /** Optional opacity in [0,1] (translucent ghosts, dissolving fakes). Default 1. */
+  alpha?: number;
+  /** Optional packed color to blend toward (exposed real/fake tint). */
+  tint?: number;
+}
+
+/** Blend two packed colors: (1-k)*base + k*tint. */
+function blend(base: number, tint: number, k: number): number {
+  const r = (base & 0xff) * (1 - k) + (tint & 0xff) * k;
+  const g = ((base >> 8) & 0xff) * (1 - k) + ((tint >> 8) & 0xff) * k;
+  const b = ((base >> 16) & 0xff) * (1 - k) + ((tint >> 16) & 0xff) * k;
+  return rgba(r | 0, g | 0, b | 0);
 }
 
 /** Distance shading factor, matching the wall fog curve. */
@@ -72,6 +84,9 @@ export function renderSprites(
     const th = sprite.texture.height;
     const shadeT = fog(transformY);
     const startXOffset = -(spriteW >> 1) + screenX;
+    const alpha = sprite.alpha ?? 1;
+    if (alpha <= 0.02) continue;
+    const tint = sprite.tint;
 
     for (let x = drawStartX; x < drawEndX; x++) {
       // Occlusion: skip stripes hidden behind nearer walls.
@@ -82,9 +97,16 @@ export function renderSprites(
       for (let y = drawStartY; y < drawEndY; y++) {
         const texY = Math.floor(((y - spriteTop) * th) / spriteH);
         if (texY < 0 || texY >= th) continue;
-        const c = sprite.texture.data[texY * tw + texX]!;
+        let c = sprite.texture.data[texY * tw + texX]!;
         if ((c >>> 24) === 0) continue; // transparent
-        fb.buf[y * SCREEN_W + x] = shade(c, shadeT);
+        if (tint !== undefined) c = blend(c, tint, 0.5);
+        let out = shade(c, shadeT);
+        if (alpha < 1) {
+          // Alpha-blend against whatever is already in the framebuffer.
+          const dst = fb.buf[y * SCREEN_W + x]!;
+          out = blend(dst, out, alpha);
+        }
+        fb.buf[y * SCREEN_W + x] = out;
       }
     }
   }

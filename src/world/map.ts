@@ -8,6 +8,8 @@ interface DoorState {
   open: boolean;
   label?: string;
   locked: boolean;
+  /** False doors (docs/05) only exist while Trust distortion is active. */
+  isFalse: boolean;
 }
 
 /** Parse + lightly validate a raw JSON object into a GameMap. Throws on bad shape. */
@@ -33,6 +35,8 @@ const key = (x: number, y: number): string => `${x},${y}`;
 export class World {
   readonly map: GameMap;
   private readonly doors = new Map<string, DoorState>();
+  /** Trust distortion state (docs/05). When on, false doors appear/block. */
+  distortionActive = false;
 
   constructor(map: GameMap) {
     this.map = map;
@@ -41,6 +45,7 @@ export class World {
         open: false,
         label: d.label,
         locked: d.locked ?? false,
+        isFalse: d.false ?? false,
       });
     }
   }
@@ -64,7 +69,11 @@ export class World {
    */
   solidAt = (x: number, y: number): number => {
     const door = this.doors.get(key(x, y));
-    if (door) return door.open ? 0 : DOOR_TILE;
+    if (door) {
+      // A false door is only present while distortion is active (docs/05).
+      if (door.isFalse && !this.distortionActive) return this.tileAt(x, y);
+      return door.open ? 0 : DOOR_TILE;
+    }
     return this.tileAt(x, y);
   };
 
@@ -79,12 +88,29 @@ export class World {
    * M0: `locked` doors still open (lock/evidence logic is an M1 concern) but we
    * surface the state so the hook is ready.
    */
-  tryOpenDoor(pos: Vec2, dir: Vec2): 'opened' | 'locked' | 'none' {
+  tryOpenDoor(pos: Vec2, dir: Vec2): 'opened' | 'locked' | 'false' | 'none' {
     const tx = Math.floor(pos.x + dir.x * 0.8);
     const ty = Math.floor(pos.y + dir.y * 0.8);
     const door = this.doors.get(key(tx, ty));
     if (!door || door.open) return 'none';
+    // A false door only "exists" during distortion, and never truly opens.
+    if (door.isFalse) return this.distortionActive ? 'false' : 'none';
     door.open = true;
     return door.locked ? 'locked' : 'opened';
+  }
+
+  /** Open a specific door tile (used by ghost replays). Returns whether it opened. */
+  openDoorAt(x: number, y: number): boolean {
+    const door = this.doors.get(key(x, y));
+    if (!door || door.open || door.isFalse) return false;
+    door.open = true;
+    return true;
+  }
+
+  /** The branch label of the door in front, if any (docs/10 punny doors). */
+  doorLabelInFront(pos: Vec2, dir: Vec2): string | undefined {
+    const tx = Math.floor(pos.x + dir.x * 0.8);
+    const ty = Math.floor(pos.y + dir.y * 0.8);
+    return this.doors.get(key(tx, ty))?.label;
   }
 }

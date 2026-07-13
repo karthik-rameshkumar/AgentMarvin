@@ -1,7 +1,6 @@
-// Shared types for AgentMarvin M0.
-// The map schema mirrors docs/11-technical-spec.md exactly so later milestones
-// (Sessions, Trails, Gates) need no format change. Fields not used in M0 are
-// parsed and kept but otherwise inert.
+// Shared, dependency-light data types for AgentMarvin.
+// The map schema mirrors docs/11-technical-spec.md. GameState lives in
+// core/game.ts (not here) to keep this module free of import cycles.
 
 /** A 2D grid position in tile coordinates. */
 export type Vec2 = { x: number; y: number };
@@ -19,28 +18,48 @@ export interface MapGrid {
 export interface MapDoor {
   /** [x, y] tile the door occupies. */
   at: [number, number];
+  /** Punny branch label shown as a toast on open (docs/10). */
   label?: string;
-  /** M0: doors open on interact regardless of `locked`. Lock logic lands in M1. */
   locked?: boolean;
   opensVia?: string;
+  /** A false door (docs/05): only appears/blocks while Trust distortion is active. */
+  false?: boolean;
 }
+
+/** A binding production decision at a Gate (docs/02 §5). */
+export type GateDecision = 'promote' | 'reject' | 'hold';
+
+/** Weapon slots implemented in M1. */
+export type WeaponId = 'context-scanner' | 'session-replayer';
 
 /** Entity as authored in the map JSON. `type` drives which sprite is drawn. */
 export interface MapEntity {
   type: string;
   /** [x, y] in tile coordinates (may be fractional). */
   at: [number, number];
-  /** Whether a hallucination is real (M1 mechanic); parsed now, unused in M0. */
+  /** Hallucination Bot: whether it is real (vs. a fake to expose). */
   real?: boolean;
+  /** pickup: the WeaponId it grants. */
   item?: string;
+  /** session-anchor: which session log it replays. */
   sessionId?: string;
+  /** gate-node: minimum evidence + the sound decision (docs/02 §5). */
   requiresEvidence?: number;
+  soundDecision?: GateDecision;
+  /** rubber-duck / readme: the hint or note text (docs/10). */
+  hint?: string;
 }
 
-/** Recorded action log for a Session ghost. Parsed but unused in M0. */
+/** One recorded event in a Session log (docs/02 §1; replayed through the sim). */
+export type SessionEvent =
+  | { t: number; kind: 'move'; x: number; y: number; dirX: number; dirY: number }
+  | { t: number; kind: 'door'; at: [number, number] }
+  | { t: number; kind: 'say'; text: string };
+
+/** Recorded action log for a Session ghost. */
 export interface MapSession {
   id: string;
-  actions: unknown[];
+  actions: SessionEvent[];
 }
 
 /** Lineage edge for the Trail Beacon. Parsed but unused in M0. */

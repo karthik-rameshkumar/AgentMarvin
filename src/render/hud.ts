@@ -1,8 +1,12 @@
-// Minimal debug HUD for M0: a tiny bitmap font renders fps + coords into the
-// framebuffer. The full neon terminal HUD + Trust meter (docs/05, docs/08) lands
-// in M1; this is just enough to prove the exit criterion (~60fps).
+// HUD. Two parts:
+//  1. `drawDebug` — the M0 bitmap fps/coords readout drawn into the framebuffer,
+//     kept for the headless render tool and a dev overlay.
+//  2. `Hud` — the M1 neon-terminal DOM overlay (docs/08): Trust meter, evidence,
+//     weapon, narration toasts, crosshair, and the win/reveal card. DOM is used
+//     for text-heavy, easily-glitched, interactive chrome layered over the canvas.
 
 import { Framebuffer, rgba } from './framebuffer';
+import type { TrustTier } from '../mechanics/trust';
 
 // 3x5 pixel glyphs, encoded row-major as bit strings (LSB = leftmost pixel).
 // Only the characters we need for a debug line.
@@ -49,4 +53,96 @@ export function drawDebug(fb: Framebuffer, fps: number, px: number, py: number):
   const green = rgba(124, 255, 178); // neon accent (docs/08)
   drawText(fb, `FPS:${fps.toFixed(0)}`, 3, 3, green);
   drawText(fb, `X:${px.toFixed(1)} Y:${py.toFixed(1)}`, 3, 10, green);
+}
+
+// ---------------------------------------------------------------------------
+// Neon terminal DOM HUD (M1)
+// ---------------------------------------------------------------------------
+
+function el(tag: string, className: string, parent: HTMLElement): HTMLDivElement {
+  const e = document.createElement(tag) as HTMLDivElement;
+  e.className = className;
+  parent.appendChild(e);
+  return e;
+}
+
+export class Hud {
+  readonly root: HTMLDivElement;
+  private trustFill: HTMLDivElement;
+  private trustLabel: HTMLDivElement;
+  private evidenceEl: HTMLDivElement;
+  private weaponEl: HTMLDivElement;
+  private toastWrap: HTMLDivElement;
+  private reveal: HTMLDivElement;
+
+  constructor(mount: HTMLElement = document.body) {
+    this.root = el('div', 'hud', mount);
+
+    const trustBox = el('div', 'hud-trust', this.root);
+    this.trustLabel = el('div', 'hud-trust-label', trustBox);
+    this.trustLabel.textContent = 'TRUST 100%';
+    const bar = el('div', 'hud-trust-bar', trustBox);
+    this.trustFill = el('div', 'hud-trust-fill', bar);
+
+    const bottom = el('div', 'hud-bottom', this.root);
+    this.weaponEl = el('div', 'hud-weapon', bottom);
+    this.evidenceEl = el('div', 'hud-evidence', bottom);
+
+    el('div', 'hud-crosshair', this.root);
+
+    this.toastWrap = el('div', 'hud-toasts', this.root);
+
+    this.reveal = el('div', 'hud-reveal hidden', this.root);
+
+    this.setWeapon('Context Scanner');
+    this.setEvidence(0);
+  }
+
+  setTrust(value: number, tier: TrustTier): void {
+    const pct = Math.round(value);
+    this.trustLabel.textContent = `TRUST ${pct}%`;
+    this.trustFill.style.width = `${pct}%`;
+    this.root.dataset['tier'] = tier;
+  }
+
+  setEvidence(n: number): void {
+    this.evidenceEl.textContent = `EVIDENCE ${n}`;
+  }
+
+  setWeapon(name: string): void {
+    this.weaponEl.textContent = name;
+  }
+
+  /** Distortion glitch on the whole HUD (docs/05 T1). */
+  setGlitch(on: boolean): void {
+    this.root.classList.toggle('glitch', on);
+  }
+
+  /** Transient narration line in dev-humor voice; confirms, never gates (docs/07). */
+  toast(text: string): void {
+    const t = el('div', 'hud-toast', this.toastWrap);
+    t.textContent = text;
+    // Force reflow then fade in/out via CSS classes.
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => {
+      t.classList.remove('show');
+      setTimeout(() => t.remove(), 600);
+    }, 3200);
+  }
+
+  /** The end-of-slice reveal card mapping the fiction to real Entire (docs/07). */
+  showReveal(title: string, lines: string[]): void {
+    this.reveal.innerHTML = '';
+    const h = el('div', 'hud-reveal-title', this.reveal);
+    h.textContent = title;
+    for (const line of lines) {
+      const p = el('div', 'hud-reveal-line', this.reveal);
+      p.textContent = line;
+    }
+    this.reveal.classList.remove('hidden');
+  }
+
+  hideReveal(): void {
+    this.reveal.classList.add('hidden');
+  }
 }
