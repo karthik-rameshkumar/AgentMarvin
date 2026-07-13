@@ -1,0 +1,40 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "70351819359b",
+  "strategy": "manual-commit",
+  "branch": "m0-engine-skeleton",
+  "checkpoints_count": 4,
+  "files_touched": [
+    "docs/00-vision-and-pillars.md",
+    "docs/01-world-and-regions.md",
+    "docs/02-core-mechanics.md",
+    "docs/03-weapons.md",
+    "docs/04-enemies.md",
+    "docs/05-trust-system.md",
+    "docs/06-episodes-and-levels.md",
+    "docs/07-learning-and-onboarding.md",
+    "docs/08-visual-audio-direction.md",
+    "docs/09-multiplayer.md",
+    "docs/10-easter-eggs.md",
+    "docs/11-technical-spec.md",
+    "docs/12-build-plan-roadmap.md",
+    "docs/README.md",
+    "docs/glossary.md"
+  ],
+  "sessions": [
+    {
+      "metadata": "/70/351819359b/0/metadata.json",
+      "transcript": "/70/351819359b/0/full.jsonl",
+      "compact_transcript": "/70/351819359b/0/transcript.jsonl",
+      "content_hash": "/70/351819359b/0/content_hash.txt",
+      "prompt": "/70/351819359b/0/prompt.txt"
+    }
+  ],
+  "token_usage": {
+    "input_tokens": 9667,
+    "cache_creation_tokens": 168278,
+    "cache_read_tokens": 8639194,
+    "output_tokens": 109027,
+    "api_call_count": 87
+  }
+}

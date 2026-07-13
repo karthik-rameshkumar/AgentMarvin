@@ -1,0 +1,79 @@
+{
+  "cli_version": "0.8.42",
+  "checkpoint_id": "70351819359b",
+  "session_id": "c867ec17-d5ad-40e1-bc21-f13dd4aa9f3a",
+  "strategy": "manual-commit",
+  "created_at": "2026-07-13T03:46:06.150682Z",
+  "branch": "m0-engine-skeleton",
+  "checkpoints_count": 4,
+  "save_step_count": 2,
+  "files_touched": [
+    "docs/00-vision-and-pillars.md",
+    "docs/01-world-and-regions.md",
+    "docs/02-core-mechanics.md",
+    "docs/03-weapons.md",
+    "docs/04-enemies.md",
+    "docs/05-trust-system.md",
+    "docs/06-episodes-and-levels.md",
+    "docs/07-learning-and-onboarding.md",
+    "docs/08-visual-audio-direction.md",
+    "docs/09-multiplayer.md",
+    "docs/10-easter-eggs.md",
+    "docs/11-technical-spec.md",
+    "docs/12-build-plan-roadmap.md",
+    "docs/README.md",
+    "docs/glossary.md"
+  ],
+  "agent": "Claude Code",
+  "model": "claude-opus-4-8[1m]",
+  "turn_id": "d0b34cfd2fb3",
+  "compact_transcript_start": 0,
+  "token_usage": {
+    "input_tokens": 9667,
+    "cache_creation_tokens": 168278,
+    "cache_read_tokens": 8639194,
+    "output_tokens": 109027,
+    "api_call_count": 87
+  },
+  "session_metrics": {
+    "turn_count": 4
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-07-13T03:46:06.098353Z",
+    "agent_lines": 936,
+    "agent_removed": 0,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 936,
+    "total_lines_changed": 936,
+    "agent_percentage": 100,
+    "metric_version": 2
+  },
+  "prompt_attributions": [
+    {
+      "checkpoint_number": 1,
+      "user_lines_added": 93,
+      "user_lines_removed": 0,
+      "agent_lines_added": 0,
+      "agent_lines_removed": 0,
+      "user_added_per_file": {
+        "AgentMarvin_Game_Design_Spec_v1.pdf": 93
+      }
+    },
+    {
+      "checkpoint_number": 2,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 1029,
+      "agent_lines_removed": 0
+    },
+    {
+      "checkpoint_number": 3,
+      "user_lines_added": 0,
+      "user_lines_removed": 0,
+      "agent_lines_added": 4203,
+      "agent_lines_removed": 0
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+login
+
+---
+
+There si a PDF in the folder, build out the spec further
+
+---
+
+Build the game from the docs :)
